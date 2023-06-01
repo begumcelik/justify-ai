@@ -27,6 +27,7 @@ hiddenElements2.forEach((el) => observer2.observe(el));
 
 // Cube animation
 window.addEventListener("scroll", function () {
+    revealSpans()
     var cube = document.querySelector(".cube");
     var scrollPosition = window.pageYOffset;
     var cogDissonance = document.querySelector(".cog-dissonance");
@@ -35,62 +36,59 @@ window.addEventListener("scroll", function () {
     var rotateY = scrollPosition / 5; // Adjust the division factor as needed for the desired rotation speed
 
     if(cogDissonance.classList.contains('show')){
-        if(screen.width < 1400){
-            translateX = 0;
-            translateY = 0;
+        let rect = cube.getBoundingClientRect();
+        let y = rect.y;
+    
+        let rect2 = cogDissonance.getBoundingClientRect();
+        let y2 = rect2.y;
+
+        console.log("cube:", y);
+        console.log("baslık", y2);
+
+ 
+        if(y2 == y){
+            translateX = 0; // Adjust the division factor as needed for the desired speed
+            translateY = 0; // Adjust the division factor as needed for the desired speed
+            // rotateY = 0;
         }
         else{
             translateX = -1 * scrollPosition / 7;
             translateY = scrollPosition / 12;
         }
-        let rect = cube.getBoundingClientRect();
-        let y = rect.top;
-    
-        let rect2 = cogDissonance.getBoundingClientRect();
-        let y2 = rect2.top;
-        if(y2 == y){
-            var translateX = 0; // Adjust the division factor as needed for the desired speed
-            var translateY = 0; // Adjust the division factor as needed for the desired speed
-            var rotateY = 0;
-        }
+
     }
+
+
     cube.style.transform = "translate(" + translateX + "px, " + translateY + "px) rotateY(" + rotateY + "deg) rotateZ(" + rotateY + "deg)";
+
   
 });
 
 
-var clientCase = document.querySelector(".client-case");
-transition = document.querySelector(".card-3");
 
-//document.getElementsByClassName("card-3").addEventListener("transitionend", myFunction);
+let paragraphs = [...document.querySelectorAll('.product')] ;
+let spans = [];
 
-/*
-transition.addEventListener("transitionend", () => {
-    clientCase.style.removeProperty('position');
-});
-*/
-
-/*
-var listElement = 0;
-
-
-window.addEventListener("scroll", function () {
-    var list = document.querySelector(".mission-list");
-    var listItems = list.getElementsByTagName('li');
-    var ourMission = this.document.querySelector(".our-mission");
-
-    if (listItems[listElement].classList.contains('show') || window.pageYOffset > scrollPosition + 150) {
-        listItems[listElement].style.transition = "opacity 2s";
-        listItems[listElement].style.opacity = 1;
-        scrollPosition = window.pageYOffset;
-        listItems[listElement].classList.add('show');
-        listElement++;
+paragraphs.forEach(paragraph => {
+    let htmlString = '';
+    let pArray = paragraph.textContent.split('');
+    for(let i = 0; i < pArray.length; i++){
+        htmlString += '<span class="product-span">'+ pArray[i]+ '</span>' ;
     }
+    paragraph.innerHTML = htmlString;
+})
 
-    
-    if(listItems[listItems.length-1].classList.contains('show')){
-        ourMission.style.removeProperty('position');
+spans = [...document.querySelectorAll('.product-span')];
+
+function revealSpans(){
+    for(let i = 0; i < spans.length; i++){
+        if(spans[i].parentElement.getBoundingClientRect().top < window.innerHeight / 2){
+            let {left, top} = spans[i].getBoundingClientRect();
+            top = top - (window.innerHeight * .4);
+            let opacityValue = 1 - ((top * 0.01) + (left * 0.001)) < 0.1 ? 0.1 : 1 - ((top * 0.01) + (left * 0.001)).toFixed(3);
+            opacityValue = opacityValue > 1 ? 1 : opacityValue.toFixed(3);
+            spans[i].style.opacity = opacityValue;
+        }
     }
-
-});*/
+}
 
